@@ -1,0 +1,34 @@
+[
+    {
+        "background": "rgb(202, 13, 13)",
+        "value": [
+            [true, true],
+            [true, true]
+        ]
+    },
+    {
+        "background": "rgb(9, 44, 204)",
+        "value": [
+            [true, false, false, false],
+            [true, true, true, true]
+        ]
+    },
+    {
+        "background": "rgb(8, 212, 59)",
+        "value": [
+            [false, false, false, false],
+            [false, true, false, false],
+            [false, true, true, false],
+            [false, false, false, false]
+        ]
+    },
+    {
+        "background": "rgb(224, 247, 21)",
+        "value": [
+            [false, false, false, false],
+            [false, false, false, false],
+            [false, false, false, false],
+            [true, true, true, true]
+        ]
+    }
+]
