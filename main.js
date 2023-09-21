@@ -4,9 +4,13 @@ let props = {
 };
 const tablero = document.getElementById('canvas');
 const tableroAttr = tablero.getBoundingClientRect();
+
+const NUM_COLUMNAS = 14;
+const NUM_FILAS = 21;
+
 let idPieza = 1;
-let tamItemX = 0, tamItemY = 0, inicioX = 0, inicioY = 0;
-let startX = 0;
+let tamItemX = 0, tamItemY = 0, inicioX = 0, inicioY = 0, finalY = 0;
+let scrollX = 0;
 
 const botonInteraccion = document.getElementById('boton-interaccion');
 
@@ -26,7 +30,10 @@ document.addEventListener('keydown', function(event) {
             pieza.style.left = (piezaAttr.x-tamItemX)+'px';
         }
     } else if (event.key === 'ArrowDown' || event.key === 'S' || event.key === 's') {
-        pieza.style.top = `${piezaAttr.top+tamItemY}px`;
+        debugger;
+        if (parseInt(finalY) > parseInt(piezaAttr.y+piezaAttr.height+(piezaAttr.height/2))) {
+            pieza.style.top = `${piezaAttr.top+tamItemY}px`;
+        }
     }
 });
 
@@ -36,18 +43,18 @@ document.addEventListener('touchstart', function(event) {
 });
 
 document.addEventListener('touchmove', function(event) {
-    const deltaX = event.touches[0].clientX - startX;
+    const scrollX = event.touches[0].clientX - startX;
     const sensibilidad = 100;
 
     const pieza = document.getElementById(idPieza);
     const piezaAttr = pieza.getBoundingClientRect();
   
     debugger;
-    if (deltaX > sensibilidad) {
+    if (scrollX > sensibilidad) {
         if (parseInt(tableroAttr.left + tableroAttr.width) > parseInt(piezaAttr.left + piezaAttr.width)) {
             pieza.style.left = (piezaAttr.x+tamItemX)+'px';
         }
-    } else if (deltaX < -sensibilidad) {
+    } else if (scrollX < -sensibilidad) {
         if (parseInt(inicioX) < parseInt(piezaAttr.x)) {
             pieza.style.left = (piezaAttr.x-tamItemX)+'px';
         }
@@ -59,6 +66,8 @@ const controllerTetris = () => {
     pieza.className = 'pieza';
     pieza.id = idPieza;
     pieza.style.top = `${inicioY}px`;
+    debugger;
+    pieza.style.left = `${tableroAttr.left+(NUM_COLUMNAS/2-1)*tamItemX}px`;
     tablero.appendChild(pieza);
 
     let filaPieza = null;
@@ -83,7 +92,7 @@ const controllerTetris = () => {
         }
     }
 
-    setTimeout(()=> {
+    setTimeout(() => {
         const intervalPieza = setInterval(() => {
             const piezaAttr = pieza.getBoundingClientRect();
             if ((piezaAttr.y + piezaAttr.height) < (tableroAttr.y + tableroAttr.height - tamItemY)) {
@@ -99,18 +108,20 @@ const controllerTetris = () => {
 }
 
 const stylesTablero = () => {
-    for (let i = 0; i < 352; i++) {
+    for (let i = 0; i < NUM_COLUMNAS*NUM_FILAS; i++) {
         const cuadricula = document.createElement("div");
         cuadricula.className = 'cuadricula';
         cuadricula.id = `cuadricula${(i+1)}`;
         tablero.appendChild(cuadricula);
     }
-    tamItemX = tableroAttr.width / 16;
-    tamItemY = tableroAttr.height / 22;
+    tamItemX = tableroAttr.width / NUM_COLUMNAS;
+    tamItemY = tableroAttr.height / NUM_FILAS;
 
     const cuadriculaInicial = document.getElementById('cuadricula1').getBoundingClientRect();
     inicioX = cuadriculaInicial.x;
     inicioY = cuadriculaInicial.y;
+
+    finalY = tableroAttr.height + tableroAttr.y;
 }
 
 const audio = () => {
@@ -143,9 +154,9 @@ const audio = () => {
 }
 
 const init = async () => {
+    props.piezas = await consultarPiezas();
     stylesTablero();
     audio();
-    props.piezas = await consultarPiezas();
 }
 
 init();

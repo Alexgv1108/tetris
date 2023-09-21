@@ -1,13 +1,10 @@
 :root {
     --ancho-canvas: calc(90vh/1.1);
-    --pieza-width: calc(var(--ancho-canvas)/4);
-    --pieza-heigth: calc(90vh/5.5);
 }
 
 @media only screen and (max-width: 900px) {
     :root {
         --ancho-canvas: calc(90vh/2.5);
-        --pieza-width: calc(var(--ancho-canvas)/2);
     }
 }
 
@@ -29,8 +26,8 @@ body {
     width: var(--ancho-canvas);
     height: 90vh;
     display: grid;
-    grid-template-columns: repeat(16, 1fr);
-    grid-template-rows: repeat(22, 1fr);
+    grid-template-columns: repeat(14, 1fr);
+    grid-template-rows: repeat(21, 1fr);
 }
 
 .cuadricula {
@@ -39,7 +36,6 @@ body {
 
 .pieza {
     position: absolute;
-    left: calc(50% - (var(--pieza-width)/2));
     border: none;
 }
 
