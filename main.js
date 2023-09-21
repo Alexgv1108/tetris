@@ -1,7 +1,8 @@
-let props = {
+const props = {
     piezas: [],
     contadorPieza: 0
 };
+
 const tablero = document.getElementById('canvas');
 const tableroAttr = tablero.getBoundingClientRect();
 
@@ -19,10 +20,7 @@ let startX = 0;
 
 const botonInteraccion = document.getElementById('boton-interaccion');
 
-const consultarPiezas = async () => {
-    return fetch('piezas.json').then(response => response.json());
-}
-
+// EVENTOS
 document.addEventListener('keydown', function(event) {
     const pieza = document.getElementById(idPieza);
     const piezaAttr = pieza.getBoundingClientRect();
@@ -40,7 +38,7 @@ document.addEventListener('keydown', function(event) {
         }
     } 
     // Mover hacia abajo
-    else if (event.key === 'ArrowDown' || event.key === 'S' || event.key === 's') {
+    else if (event.key === 'ArrowDown' || event.key === 'S' || event.key === 's' && !colision(piezaAttr)) {
         if (parseInt(finalY) > parseInt(piezaAttr.y+piezaAttr.height+(piezaAttr.height/2))) {
             pieza.style.top = `${piezaAttr.top+tamItemY}px`;
         }
@@ -72,7 +70,6 @@ document.addEventListener('keydown', function(event) {
         const piezasInvertidas = [];
 
         // rotación del elemento
-        debugger;
         for (let i = 0; i < cantidadElementosY ; i++) {
             const pixelAux = [];
             for (let j = cantidadElementosX-1; j > -1; j--) {
@@ -127,8 +124,14 @@ document.addEventListener('touchmove', function(event) {
         }
     }
 });
+// FIN EVENTOS
+
+const consultarPiezas = async () => {
+    return fetch('piezas.json').then(response => response.json());
+}
 
 const crearPieza = (pieza, arrPiezas) => {
+    debugger;
     piezaActual = [];
     let filaPieza = null;
     for (let i = 0; i < arrPiezas.length; i++) {
@@ -170,7 +173,7 @@ const controllerTetris = () => {
     setTimeout(() => {
         const intervalPieza = setInterval(() => {
             const piezaAttr = pieza.getBoundingClientRect();
-            if ((piezaAttr.y + piezaAttr.height) < (tableroAttr.y + tableroAttr.height - tamItemY)) {
+            if ((piezaAttr.y + piezaAttr.height) < (tableroAttr.y + tableroAttr.height - tamItemY) && !colision(piezaAttr)) {
                 pieza.style.top = (piezaAttr.y+tamItemY)+'px';
             } else {
                 idPieza++;
@@ -182,12 +185,44 @@ const controllerTetris = () => {
     }, 800);
 }
 
+const colision = pieza => {
+    for (let i = 1; i < idPieza; i++) {
+        const piezaColision = document.getElementById(i);
+        const piezaColisionAttr = piezaColision.getBoundingClientRect();
+        if (parseInt(pieza.y+pieza.height) === parseInt(piezaColisionAttr.y) 
+            && parseInt(pieza.x+pieza.width) > parseInt(piezaColisionAttr.x)
+            && parseInt(pieza.x) < parseInt(piezaColisionAttr.x+piezaColisionAttr.width)) {
+                debugger;
+                const validacionPixels = validarPixelColision(piezaColision, pieza);
+                if (!validacionPixels || validacionPixels === piezaActual[0].length) {
+                    return true;
+                }
+            }
+    }
+    return false;
+}
+
+const validarPixelColision = (piezaColision, pieza) => {
+    const ultimaFila = piezaColision.querySelectorAll("div.pixel");
+    let contador = 0;
+    for (let i = 0; i < (ultimaFila.length/2); i++) {
+        const pixelColision = ultimaFila[i].getBoundingClientRect();
+        if (ultimaFila[i].className === PIXEL_INVISIBLE) {
+            if (parseInt(pieza.x+(pieza.width*(contador))) === parseInt(pixelColision.x)) contador++; // falta validar cantidad de items
+        } 
+    }
+    return contador;
+}
+
 const stylesTablero = () => {
+    const divCuadriculas = document.createElement("div");
+    divCuadriculas.className = 'contenedor-cuadricula';
+    tablero.appendChild(divCuadriculas);
     for (let i = 0; i < NUM_COLUMNAS*NUM_FILAS; i++) {
         const cuadricula = document.createElement("div");
         cuadricula.className = 'cuadricula';
         cuadricula.id = `cuadricula${(i+1)}`;
-        tablero.appendChild(cuadricula);
+        divCuadriculas.appendChild(cuadricula);
     }
     tamItemX = tableroAttr.width / NUM_COLUMNAS;
     tamItemY = tableroAttr.height / NUM_FILAS;
