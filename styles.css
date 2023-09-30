@@ -1,19 +1,19 @@
 :root {
-    --ancho-canvas: calc(90vh/1.1);
     --margin-left: 100px;
-    --margin-top: 3vh;
+}
+
+html, body {
+    overflow-y: hidden; 
+    height: 100vh;
 }
 
 @media only screen and (max-width: 900px) {
     :root {
-        --ancho-canvas: calc(90vh/1.9);
         --margin-left: 0px;
-        --margin-top: 0px;
     }
 
     body {
         background: #ecebeb;
-        height: 100vh;
         background-color: black;
         display: grid;
         place-content: center;
@@ -30,13 +30,10 @@ body {
     height: 100vh;
     background-color: black;
     margin-left: var(--margin-left);
-    margin-top: var(--margin-top);
 }
 
 #canvas {
     background: black;
-    width: var(--ancho-canvas);
-    height: 90vh;
 }
 
 .contenedor-cuadricula {
